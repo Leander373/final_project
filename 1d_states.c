@@ -68,12 +68,12 @@ void steps(char *state, int size, int iterations, const char *rule, const int ru
     char filename[256];
     if (!rand) {
         snprintf(filename, sizeof(filename),
-             "1d_plots/1d_rule_%d.txt",
+             "1d_states/1d_rule_%d.txt",
              rule_name);
     }
     else {
         snprintf(filename, sizeof(filename),
-             "1d_plots/1d_rule_%d_random.txt",
+             "1d_states/1d_rule_%d_random.txt",
              rule_name);
     }
 
