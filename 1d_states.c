@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <time.h>
 #include <sys/stat.h>   // für mkdir
 #include <sys/types.h>
 
@@ -54,7 +56,7 @@ void apply_rule (const char *rule, char *state, int size) {
 
 
 // Function for computing iterated steps
-void steps(char *state, int size, int iterations, const char *rule, const int rule_name) {
+void steps(char *state, int size, int iterations, const char *rule, const int rule_name, bool rand) {
     // 1. Check if the folder exists, do not create a new one
     struct stat st;
     if (stat("1d_plots", &st) != 0 || !S_ISDIR(st.st_mode)) {
@@ -62,11 +64,18 @@ void steps(char *state, int size, int iterations, const char *rule, const int ru
         exit(1);
     }
 
-    // 2. Build the filename: e.g., "1d_plots/1d_rule_187.txt"
+    // 2. Build the filename: e.g., "1d_plots/1d_rule_187.txt" for different states
     char filename[256];
-    snprintf(filename, sizeof(filename),
+    if (!rand) {
+        snprintf(filename, sizeof(filename),
              "1d_plots/1d_rule_%d.txt",
              rule_name);
+    }
+    else {
+        snprintf(filename, sizeof(filename),
+             "1d_plots/1d_rule_%d_random.txt",
+             rule_name);
+    }
 
     // 3. Open the file for writing
     FILE *file = fopen(filename, "w");
@@ -97,6 +106,21 @@ void steps(char *state, int size, int iterations, const char *rule, const int ru
     fclose(file);
 }
 
+void reset (char *state, int size) {
+    for (int i = 0; i < size; i++) {
+        state[i] = '0';
+    }
+
+    int mid = size / 2;
+    state[mid] = '1';
+}
+
+void randomize (char *state, int size) {
+    for (int i = 0; i < size; i++) {
+        state[i] = (rand() % 2) + '0'; // Randomly set '0' or '1'
+    }
+}
+
 
 
 int main (int argc, char *argv[]) {
@@ -108,21 +132,43 @@ int main (int argc, char *argv[]) {
     int size = atoi(argv[1]);
     int iterations = atoi(argv[2]);
 
-    char *state = calloc(size, sizeof(char));
+    char *state = malloc(size * sizeof(char));
     if (!state) {
         fprintf(stderr, "Error: Memory allocation failed.\n");
         return EXIT_FAILURE;
     }
 
-    // Initialize the state with a single '1' in the middle
-    int mid = size / 2;
-    state[mid] = '1';
+    reset(state, size); // Initialize state with a single '1' in the middle
 
-    // Compute steps
-    steps(state, size, iterations, RULE_22, 22);
-    steps(state, size, iterations, RULE_106, 106);
-    steps(state, size, iterations, RULE_187, 187);
-    steps(state, size, iterations, RULE_214, 214);
+    // Compute steps for not random initial condition
+    steps(state, size, iterations, RULE_22, 22, false);
+    reset(state, size); // Reset state for next rule
 
+    steps(state, size, iterations, RULE_106, 106, false);
+    reset(state, size); // Reset state for next rule
+
+    steps(state, size, iterations, RULE_187, 187, false);
+    reset(state, size); // Reset state for next rule
+
+    steps(state, size, iterations, RULE_214, 214, false);
+    reset(state, size); // Reset state for next rule
+
+
+    // Set random initial state
+    srand(time(NULL)); // Seed for random number generation
+    randomize(state, size);
+
+    // Compute steps for random initial condition
+    steps(state, size, iterations, RULE_22, 22, true);
+    randomize(state, size); // Reset state for next rule
+
+    steps(state, size, iterations, RULE_106, 106, true);
+    randomize(state, size); // Reset state for next rule
+
+    steps(state, size, iterations, RULE_187, 187, true);
+    randomize(state, size); // Reset state for next rule
+
+    steps(state, size, iterations, RULE_214, 214, true);
+    
     free(state);
 }
