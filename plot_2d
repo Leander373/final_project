@@ -1,0 +1,4 @@
+#!/bin/bash
+
+module load anaconda3/2023.09-0-gcc-13.2.0-t4m5mch >/dev/null 2>&1
+python3 .animate_2d_plot.py $1
