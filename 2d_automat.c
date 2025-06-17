@@ -28,17 +28,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    /*
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            printf("%d", gitter[i][j]);
-        }
-        printf("\n");
-    }
-    */
-
     for (int t = 0; t < M; t++)
     {
         int temp[N][N];
@@ -67,6 +56,9 @@ int main(int argc, char *argv[])
                     {
                         temp[i][j] = 1;
                     }
+                    else {
+                        temp[i][j] = 0;
+                    }
                 }
             }
         }
@@ -77,21 +69,23 @@ int main(int argc, char *argv[])
                 gitter[i][j] = temp[i][j];
             }
         }
-        // **gitter = temp;
 
         FILE *file;
-        file = fopen("2d_states/2d_state_%04d.txt", "w");
+
+        char filename[50];
+        snprintf(filename, sizeof(filename), "2d_states/2d_state_%04d.txt", t + 1);
+
+        file = fopen(filename, "w");
 
         for (int i = 0; i < N; i++)
         {
             for (int j = 0; j < N; j++)
             {
                 fprintf(file, "%d", gitter[i][j]);
-                if (j < N - 1)
-                fprintf(file, " ");
             }
             fprintf(file, "\n");
         }
+        fclose(file);
     }
 
     return 0;
