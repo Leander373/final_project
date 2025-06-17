@@ -23,7 +23,7 @@ structs.o: structs.c structs.h
 	$(CC) -c $(CFlags) $<
 
 
-run: 1dstates 2dstates
+run: 1dstates 2d_automat
 	./1dstates
 	./2d_automat
 

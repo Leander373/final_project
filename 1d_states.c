@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-
+// Own headers with function declarations, structs etc. 
 #include "structs.h"
 #include "cell.h"
 
