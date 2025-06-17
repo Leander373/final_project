@@ -56,7 +56,8 @@ int main(int argc, char *argv[])
                     {
                         temp[i][j] = 1;
                     }
-                    else {
+                    else
+                    {
                         temp[i][j] = 0;
                     }
                 }
@@ -81,7 +82,7 @@ int main(int argc, char *argv[])
         {
             for (int j = 0; j < N; j++)
             {
-                fprintf(file, "%d", gitter[i][j]);
+                fprintf(file, "%d ", gitter[i][j]);
             }
             fprintf(file, "\n");
         }
