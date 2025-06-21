@@ -43,4 +43,4 @@ run: 1dstates 2d_automat
 
 .PHONY: all clean run
 clean:
-	$(RM) *.o 1dstates 2d_automat
+	$(RM) *.o 1dstates 2d_automat segler
