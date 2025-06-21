@@ -4,10 +4,10 @@ CFlags = -Wall -Wextra -Wpedantic -Wpedantic -std=c18
 # Main rule
 all: 1dstates 2d_automat
 
-1dstates: 1d_states.o cell.o structs.o
+1dstates: 1d_states.o cell.o structs.o stepcom.o
 	$(CC) $^ -o $@
 
-1d_states.o: 1d_states.c cell.h structs.h
+1d_states.o: 1d_states.c cell.h structs.h stepcom.h
 	$(CC) -c $(CFlags) $<
 
 cell.o: cell.c cell.h structs.h
@@ -16,10 +16,13 @@ cell.o: cell.c cell.h structs.h
 structs.o: structs.c structs.h
 	$(CC) -c $(CFlags) $<
 
-2d_automat: 2d_automat.o 
+stepcom.o: stepcom.c stepcom.h structs.h cell.h
+	$(CC) -c $(CFlags) $<
+
+2d_automat: 2d_automat.o cell.o structs.o stepcom.o
 	$(CC) $^ -o $@
 
-2d_automat.o: 2d_automat.c 
+2d_automat.o: 2d_automat.c cell.h structs.h stepcom.h
 	$(CC) -c $(CFlags) $<
 
 

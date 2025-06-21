@@ -6,6 +6,7 @@
 // Own headers with function declarations, structs etc. 
 #include "structs.h"
 #include "cell.h"
+#include "stepcom.h"
 
 
 int main (int argc, char *argv[]) {
