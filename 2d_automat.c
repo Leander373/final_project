@@ -4,7 +4,6 @@
 
 // Self created headers
 #include "cell.h"
-#include "structs.h"
 #include "stepcom.h"
 
 
