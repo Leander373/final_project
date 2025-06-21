@@ -5,6 +5,7 @@
 \usepackage{amsmath} % For mathematical formulas
 \usepackage{hyperref} % For hyperlinks
 \usepackage{enumitem}
+\usepackage{float} % For controlling figure placement
 % Listings for code
 \usepackage{listings}
 \lstset{
@@ -109,7 +110,9 @@ the full state is saved in a file named \texttt{1d\_states/1d\_rule\_<Regel>.txt
 \newline
 For Random Initialization Phase the random number generator initializes a new starting grid. For each rule, the state is 
 randomized in \texttt{randomize()}, and the simulation is repeated as explained previously. Each rule’s results under random initial 
-conditions are also saved to the file named \texttt{1d\_states/1d\_rule\_<Regel>\_random.txt} for comparison.
+conditions are also saved to the file named 
+\newline
+\texttt{1d\_states/1d\_rule\_<Regel>\_random.txt} for comparison.
 \newline
 
 \vspace{1cm}
@@ -145,10 +148,28 @@ over time, with rows representing iterations and black/white pixels for 1/0 stat
     To generate the plots, use the command: \texttt{"./plot\_1d 22"} (e.g., for \texttt{Rule\_22}).
 \end{enumerate} 
 
-\vspace{0.5 cm}
-\texttt{Examples:} 
+\vspace{3.5 cm}
+\texttt{Examples: Here with initial state of 1 in the middle.}  
 \newline
-\texttt{Rule\_22; N=51, M=100:} \hspace{2cm} \texttt{Rule\_106; N=51, M=100:}
+
+
+% Picture of rule 22
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=8cm, height=8cm]{1d_plots/1d_rule_22.png}}
+    \caption{Rule\_22; N=151, M=151}
+    \label{fig:your_label}
+\end{figure}
+
+\vspace{0.5cm}
+
+% Picture of rule 22
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=8cm, height=8cm]{1d_plots/1d_rule_214.png}}
+    \caption{Rule\_214; N=151, M=151}
+    \label{fig:your_label}
+\end{figure}
 
 \vspace{1cm}
 
@@ -156,10 +177,8 @@ over time, with rows representing iterations and black/white pixels for 1/0 stat
 
 
 
-
-
 % Problem 2
-\section{Part B and C: Rocket Equation}
+\section{Part B}
 
 
 \vspace{1cm}
