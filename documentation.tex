@@ -7,6 +7,10 @@
 \usepackage{enumitem}
 \usepackage{float} % For controlling figure placement
 
+\usepackage[font=small]{caption}
+
+%\usepackage{animate} % For animations
+
 % Listings for code
 \usepackage{xcolor} % For colored text
 \usepackage{listings}
@@ -56,7 +60,7 @@
 
 
 % Problem A
-\section{Part A: One Dimensional Cellular Automats}
+\section{Part A: One Dimensional Cellular Automaton}
 \vspace{1cm}
 
 
@@ -165,7 +169,7 @@ over time, with rows representing iterations and black/white pixels for 1/0 stat
     \vspace{0.1 cm}
 
     \item 
-    To run the simulation, use the command: \texttt{"./1d\_states N M"} (e.g., \texttt{201 100}).
+    To run the simulation, use the command: \texttt{"./1dstates <N> <M>"} (e.g., \texttt{201 100}).
     \newline
     \vspace{0.1 cm}
 
@@ -182,7 +186,7 @@ over time, with rows representing iterations and black/white pixels for 1/0 stat
 \begin{figure}[H]
     \centering
     \fbox{\includegraphics[width=8cm, height=8cm]{1d_plots/1d_rule_22.png}}
-    \caption{Rule\_22; N=151, M=151}
+    \caption{\small Rule\_22; N=151, M=151}
     \label{fig:your_label}
 \end{figure}
 
@@ -192,7 +196,7 @@ over time, with rows representing iterations and black/white pixels for 1/0 stat
 \begin{figure}[H]
     \centering
     \fbox{\includegraphics[width=8cm, height=8cm]{1d_plots/1d_rule_214.png}}
-    \caption{Rule\_214; N=151, M=151}
+    \caption{\small Rule\_214; N=151, M=151}
     \label{fig:your_label}
 \end{figure}
 
@@ -203,33 +207,206 @@ over time, with rows representing iterations and black/white pixels for 1/0 stat
 
 
 % Problem B
-\section{Part B}
+\section{Part B: Two Dimensional Cellular Automaton}
+\vspace{1cm}
+
+\subsection{Task}
+The goal for this part is to simulate the development of a culture of cells in a two-
+dimensional plain over time while its existence starts in an arbitrary state: The number “1”
+represents living cells, the number “0” dead cells. The evolution over time is defined by
+the following rules: A living cell with less than two living neighbour cells dies of
+loneliness. A living cell with two or three living neighbours remains alive. A living cell
+with more than three living neighbours dies of overpopulation. In addition, a dead cell is
+brought back to life if it has exactly three living neighbours. As in part A, the program
+takes in two command-line inputs, one for the amount of time iterations and one for the
+size of the two-dimensional cell culture. After each time iteration the current state is stored
+in a separate file whereas the evolution over time is visualized via a plotting tool.
 
 
 \vspace{1cm}
 
 \subsection{Idea}
+As seen in Part A, here again the use of arrays comes in quite handy for processing the
+evolution of the cells. The core idea is certainly the implementation of the corresponding
+rules which determine the state of every single cell to simulate the cell culture over time.
+Therefore, for each cell during each iteration the state of all the eight neighbour cells is
+checked and handed over to another program section in which the decision about the life
+and death of the cell is made. Consequently, the two-dimensional array is updated in each
+step for each cell and a broader evolution takes place. Lastly, each iteration step is stored
+in a separate directory in order to be available for the plotting tool.
 
 
-\vspace{1cm}
+\newpage
 
 \subsection{Implementation}
+After including various libraries and header files the first step in the code is to check if the
+correct amount of input parameters is handed over to the program via the command line
+input: To be more specific, the amount of time iterations and the size of the two-
+dimensional array are required to ensure a proper code execution.
+\newline
+Following these primary checks, the creation of the array now takes place via the \texttt{malloc}-
+function, which dynamically handles this process regarding storage. After checking if the
+creation of the cell-array proceeded correctly, it is initialized with random values due to
+the function \texttt{random\_auto} which randomly assigns zeros and ones to the array
+components and is stored in \texttt{cell.c}.
+\newline
+Furthermore, the function \texttt{fileprint\_auto} is called, which is stored in the separate file
+\texttt{stepcom.c}. A temporary array is created and assigned with values corresponding to
+several for-loops and if-statement where the value of the current cell state is changed
+according to the predefined rules regarding the cell evolution.
+\newline
+Each if-statement calls the function \texttt{nachbar\_check} which is stored in the file \texttt{cell.c}
+and forms the heart of the code.
+\newline
+A first for-loop formation proceeds as follows: For the row above and below the target
+cell, the column of the target cell and the column to the left and right of it are each
+checked for the status of the cells there. Each living cell checked in this way increases the
+\texttt{one\_counter}, which was previously initialized with zero, by one. Furthermore, the direct
+neighbour cells in the row of the target cell are checked separately with a for-loop,
+whereby the number of living cells found here also increase the \texttt{one\_counter} by one, so
+that the number of living neighbour cells is determined at the end. According to this
+\texttt{one\_counter}, each cell in the array is now updated following the predefined rules.
+In conclusion, each time iteration is stored in a separate file, which is created via a
+standard process with the functions \texttt{fopen}, \texttt{fprintf} and \texttt{fclose}.
+\newline
+Finally, the created files are now available for the plotting tool in order to create an
+animation of the cell evolution computed in \texttt{2d\_automat.c}.
 
 
-\vspace{1cm}
+\newpage
 
 \subsection{Output}
+As well as in Part A, here again the program generates two types of output.
+First, each time iteration step is stored in a \texttt{text file} (for example: \texttt{"2d\_state\_0001.txt"}) in
+the directory \texttt{"2d\_states"}.
+\newline
+Furthermore, the plotting tool \texttt{"2d\_plot"} is able to read these files and create
+corresponding \texttt{GIF-files} which display the evolution of the cell culture: Yellow dots
+represent living cells whereas purple sections represent the space without living cells.
+\newline
 
+\vspace{0.1cm}
 
-\vspace{1cm}
+\begin{enumerate}[label=\roman*.]
+    \item 
+    To use the system, you have to compile by using the \texttt{Makefile} with the command \texttt{"make"}.
+    \newline
+    \vspace{0.1 cm}
+
+    \item 
+    To run the simulation, use the command: \texttt{"./2d\_automat <N> <M>"} (e.g., \texttt{300 100}).
+    \newline
+    \vspace{0.1 cm}
+
+    \item 
+    To generate the plots, use the command: \texttt{"./plot\_2d <M>"} (e.g., for \texttt{100}).
+\end{enumerate}
+
+\vspace{0.5cm}
+
+% First picture of 2d automaton
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=8cm, height=8cm]{2d_plots/frame_000.pdf}}
+    \caption{\small Example of initial state of the 2D automaton; N=200}
+    \label{fig:your_label}
+\end{figure}
 
 
 
 \newpage
 
 
+% Problem C
+\section{Part C: Segler}
+\vspace{1cm}
+
+\subsection{Task}
+This part was very similar to part B but with a few key differences. Here the grid size N and
+number of time steps M are both fixed to 200 and the grid is not initialized with random values
+but with zeros and one special structure. When computed this structure propagates along one
+direction and changes its state periodically.
+
+
+\vspace{1cm}
+
+\subsection{Idea}
+The idea in this task is to adapt the code of the task before to this special application.
+
+
+\vspace{1cm}
+
+\subsection{Implementation}
+The first change is that the grid size N and number of time steps M are not command-line
+arguments anymore but initialized with a fixed value of 200 for both variables. Now again a 2-
+dimensional array with given size is dynamically created and initialized with only zeros. Now for
+the special structure called “raumschiff” a 2-dimensional 4x5 array is created and initialized
+with a certain pattern of ones and zeros. This structure is then placed into the 200x200 grid.
+Computing the evolution, creating the text files for each time step and visualizing the simulation
+with a GIF file is analogous to Part B.
+
+
+\newpage
+
+\subsection{Output}
+As expected, the animation shows a structure that is propagating to the left and changes its
+structure periodically.
+
+\vspace{0.1cm}
+
+\begin{enumerate}[label=\roman*.]
+    \item 
+    To use the system, you have to compile by using the \texttt{Makefile} with the command \texttt{"make"}.
+    \newline
+    \vspace{0.1 cm}
+
+    \item 
+    To run the simulation, use the command: \texttt{"./segler"}.
+    \newline
+    \vspace{0.1 cm}
+
+    \item 
+    To generate the plots, use the command: \texttt{"./plot\_2d 200"}.
+\end{enumerate}
+
+\vspace{0.5cm}
+
+% Four pictures arranged in a 2x2 grid to show time evolution
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.35\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_000.png}}
+        \caption*{\small $t=0$}
+    \end{minipage}
+    \hspace{0.2cm} % Reduce horizontal space between elements
+    \begin{minipage}[b]{0.35\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_050.png}}
+        \caption*{\small $t=50$}
+    \end{minipage}
+    \vspace{0.5cm}
+    \begin{minipage}[b]{0.35\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_100.png}}
+        \caption*{\small $t=100$}
+    \end{minipage}
+    \hspace{0.2cm} % Reduce horizontal space between elements
+    \begin{minipage}[b]{0.35\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_150.png}}
+        \caption*{\small $t=150$}
+    \end{minipage}
+    \caption{\small Time evolution of the "segler"}
+    \label{fig:time_evolution_square}
+\end{figure}
+
+
+\newpage
+
+
 % Part D
-\section{Pard D: Makefile}
+\section{Part D: Makefile}
 \vspace{1cm}
 
 
@@ -321,6 +498,138 @@ Finally, there’s a clean target that deletes all the object files and executab
 
 % Code for all parts
 \section{Appendix: Code and some more examples}
+\vspace{1cm}
+
+
+\subsection{Additional examples}
+\vspace{0.1cm}
+
+\subsection*{\small 1d\_states with random initialization}
+
+% Four pictures arranged in a 2x2 grid to show time evolution
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{1d_plots/1d_rule_22_random.png}}
+        \caption*{\small Rule 22}
+    \end{minipage}
+    \hspace{0.5cm} % Adjust horizontal space between elements
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{1d_plots/1d_rule_106_random.png}}
+        \caption*{\small Rule 106}
+    \end{minipage}
+    \vspace{0.5cm} % Adjust vertical space between rows
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{1d_plots/1d_rule_187_random.png}}
+        \caption*{\small Rule 187}
+    \end{minipage}
+    \hspace{0.5cm} % Adjust horizontal space between elements
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{1d_plots/1d_rule_214_random.png}}
+        \caption*{\small Rule 214}
+    \end{minipage}
+    \caption{\small Time evolution of the 1D automaton with random initialization (size 151, iterations 151)}
+    \label{fig:time_evolution_square}
+\end{figure}
+
+
+\newpage
+
+\subsection*{\small 2d automaton several time steps}
+
+% 12 time evolutions on one page
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_000.png}}
+        \caption*{\small $t=1$}
+    \end{minipage}
+    \hspace{0.1cm}
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_001.png}}
+        \caption*{\small $t=2$}
+    \end{minipage}
+    \hspace{0.1cm}
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_002.png}}
+        \caption*{\small $t=3$}
+    \end{minipage}
+    \vspace{0.3cm}
+
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_003.png}}
+        \caption*{\small $t=4$}
+    \end{minipage}
+    \hspace{0.1cm}
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_004.png}}
+        \caption*{\small $t=5$}
+    \end{minipage}
+    \hspace{0.1cm}
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_005.png}}
+        \caption*{\small $t=6$}
+    \end{minipage}
+    \vspace{0.3cm}
+
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_006.png}}
+        \caption*{\small $t=7$}
+    \end{minipage}
+    \hspace{0.1cm}
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_007.png}}
+        \caption*{\small $t=8$}
+    \end{minipage}
+    \hspace{0.1cm}
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_008.png}}
+        \caption*{\small $t=9$}
+    \end{minipage}
+    \vspace{0.3cm}
+
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_009.png}}
+        \caption*{\small $t=10$}
+    \end{minipage}
+    \hspace{0.1cm}
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_010.png}}
+        \caption*{\small $t=11$}
+    \end{minipage}
+    \hspace{0.1cm}
+    \begin{minipage}[b]{0.25\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{2d_plots/frame_30_011.png}}
+        \caption*{\small $t=12$}
+    \end{minipage}
+    \vspace{0.3cm}
+
+    % Repeat similar blocks for frames 13 to 30
+    % Ensure each row has 3 images and adjust spacing as needed
+
+    \caption{\small Time evolution of the 2D automaton over 12 steps (size 40).}
+    \label{fig:2d_evolution}
+\end{figure}
+
+
+\newpage
+
 
 \subsection{Main files}
 
@@ -936,5 +1245,43 @@ Finally, there’s a clean target that deletes all the object files and executab
     const char RULE_187[8] = {'1', '0', '1', '1', '1', '0', '1', '1'}; // 187 in binary
     const char RULE_214[8] = {'1', '1', '0', '1', '0', '1', '1', '0'}; // 214 in binary
 \end{lstlisting}
+
+
+\newpage
+
+
+\section{Contributors}
+\vspace{1cm}
+
+\subsection*{\small Mario Neuner} 
+\begin{itemize}
+    \item Writing code for part B and C
+    \item Documenting part B
+\end{itemize}
+
+\vspace{1cm}
+
+\subsection*{\small Christoph Bichlmeier}
+\begin{itemize}
+    \item Writing code fro part B and c
+    \item Documenting part C
+\end{itemize}
+
+\vspace{1cm}
+
+\subsection*{\small Jakob Guentner}
+\begin{itemize}
+    \item Writing code for part A
+    \item Documenting part A
+\end{itemize}
+
+\vspace{1cm}
+
+\subsection*{\small Leander Decristoforo}
+\begin{itemize}
+    \item Writing code for part A
+    \item Creating Makefile (part D)
+    \item Putting Documentation together
+\end{itemize}
 
 \end{document}
