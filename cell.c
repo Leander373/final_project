@@ -1,9 +1,8 @@
-#include "cell.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "structs.h"
+#include "cell.h"
 
 // Fucntions for 1d automats
 

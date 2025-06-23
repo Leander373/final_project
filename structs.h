@@ -1,3 +1,4 @@
+// Header file for cellular automata structures
 #ifndef STRUCTS_H
 #define STRUCTS_H
 #include <stdbool.h>
