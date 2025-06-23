@@ -6,15 +6,37 @@
 \usepackage{hyperref} % For hyperlinks
 \usepackage{enumitem}
 \usepackage{float} % For controlling figure placement
+
 % Listings for code
+\usepackage{xcolor} % For colored text
 \usepackage{listings}
-\lstset{
- language=C,
- basicstyle=\ttfamily\small,
- numbers=left,
- frame=single,
- breaklines=true,
+
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}    % Colours for code
+\definecolor{codegreen}{rgb}{0.0,0.6,0.0}
+\definecolor{codeblue}{rgb}{0.13,0.13,1}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolor}{rgb}{0.95,0.95,0.92}
+
+\lstset{    % Make listings look like code
+  language=C,
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{backcolor},
+  commentstyle=\color{codegreen}\ttfamily,
+  keywordstyle=\color{codeblue}\ttfamily\bfseries,
+  stringstyle=\color{codepurple}\ttfamily,
+  numberstyle=\tiny\color{codegray},
+  numbers=left,
+  numbersep=5pt,
+  frame=single,
+  breaklines=true,
+  captionpos=b,
+  showstringspaces=false,
+  tabsize=2,
+  morekeywords={cellauto}, % add extra keywords if needed
+  morekeywords={apply_rule, reset, randomize, nachbar_check, random_auto},
+  morekeywords={[2]<"structs.h">}, keywordstyle={[2]\color{codepurple}\ttfamily}
 }
+
 % Tighten space before sections
 \usepackage{titlesec}
 \titlespacing*{\section}{0pt}{0.5em}{0.5em}
@@ -27,12 +49,13 @@
 \date{\today}
 \begin{document}
 \maketitle
-\vspace{5cm}
+
+\newpage
 \tableofcontents
 \pagebreak
 
 
-% Problem 1
+% Problem A
 \section{Part A: One Dimensional Cellular Automats}
 \vspace{1cm}
 
@@ -173,13 +196,13 @@ over time, with rows representing iterations and black/white pixels for 1/0 stat
     \label{fig:your_label}
 \end{figure}
 
-\vspace{1cm}
+\newpage
 
 
 
 
 
-% Problem 2
+% Problem B
 \section{Part B}
 
 
@@ -202,7 +225,98 @@ over time, with rows representing iterations and black/white pixels for 1/0 stat
 
 
 
+\newpage
+
+
+% Part D
+\section{Pard D: Makefile}
 \vspace{1cm}
+
+
+\subsection{Function/struct distribution}
+The goal of this part was to create several header files containing functions and structures used by the main programs.
+\newline
+We decided to create three header files:
+\begin{enumerate}[label=\roman*.]
+    \item \texttt{cell.h} - Contains functions for initializing and manipulating cellular automata.
+    \item \texttt{stepcom.h} - Contains functions for computing and printing steps to files.
+    \item \texttt{structs.h} - Contains struct definitions and rule declarations.
+\end{enumerate}
+The corresponding functions, rules, etc., are implemented in C files with the same names as the header files. 
+For example, \texttt{cell.c} contains the functions declared in \texttt{cell.h}. Each header file is included in the main files 
+to enable the use of the respective functions and structures.
+
+\vspace{1cm}
+
+\subsection{Makefile}
+While the outsourcing of functions, structs, etc., improves code readability, it can complicate the compilation process. 
+Fortunately, Makefiles simplify this task significantly by automating the build process.
+\newline
+\subsection*{\small Description}
+This Makefile handles the entire build process for our cellular automata project. The all target is the main entry 
+point, which compiles all three executables \texttt{(1dstates, 2d\_automat, and segler)}. To do that, we use a bunch of side rules 
+— one for each object file — so every source file like \texttt{1d\_states.c, cell.c, structs.c}, and so on gets compiled separately 
+into its own .o file first. The \texttt{CC} and \texttt{CFlags} variables up top help keep the compiler command \texttt{(gcc)} and options 
+\texttt{(-Wall -Wextra -Wpedantic -std=c18)} consistent across all these targets.
+\vspace{0.1cm}
+We also added a run target to quickly compile and execute the main programs after a successful build. To use this command however, 
+the user has to run the command \texttt{make run ARGS1="<n> <m>" ARGS2="<n> <m>"} where \texttt{<n>} is the size of the grid and 
+\texttt{<m>} is the number of iterations. But be aware that \texttt{segler} has to be run seperately with \texttt{./segler} as it does not take any arguments.
+Finally, there’s a clean target that deletes all the object files and executables so we can easily rebuild the project from scratch if needed.
+
+\vspace{0.5cm}
+
+% Makefile
+\begin{lstlisting}[caption={\small Makefile},label={lst:p7001},basicstyle=\ttfamily\tiny,language=C]
+    CC = gcc
+    CFlags = -Wall -Wextra -Wpedantic -Wpedantic -std=c18
+
+    # Main rule
+    all: 1dstates 2d_automat segler
+
+    # 1D cellular automats program
+    1dstates: 1d_states.o cell.o structs.o stepcom.o
+        $(CC) $^ -o $@
+
+    1d_states.o: 1d_states.c cell.h structs.h stepcom.h
+        $(CC) -c $(CFlags) $<
+
+    cell.o: cell.c cell.h structs.h
+        $(CC) -c $(CFlags) $<
+
+    structs.o: structs.c structs.h
+        $(CC) -c $(CFlags) $<
+
+    stepcom.o: stepcom.c stepcom.h structs.h cell.h
+        $(CC) -c $(CFlags) $<
+
+    # Game of life program
+    2d_automat: 2d_automat.o cell.o structs.o stepcom.o
+        $(CC) $^ -o $@
+
+    2d_automat.o: 2d_automat.c cell.h structs.h stepcom.h
+        $(CC) -c $(CFlags) $<
+
+    # Segler program
+    segler: segler.o cell.o structs.o stepcom.o
+        $(CC) $^ -o $@
+
+    segler.o: segler.c cell.h stepcom.h
+        $(CC) -c $(CFlags) $<
+
+
+    run: 1dstates 2d_automat
+        @./1dstates $(ARGS1)
+        @./2d_automat $(ARGS2)
+
+
+    .PHONY: all clean run
+    clean:
+        $(RM) *.o 1dstates 2d_automat segler
+\end{lstlisting}
+
+
+\newpage
 
 
 % Code for all parts
