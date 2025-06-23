@@ -36,9 +36,8 @@ segler.o: segler.c cell.h stepcom.h
 
 
 run: 1dstates 2d_automat
-	./1dstates
-	./2d_automat
-	./segler
+	@./1dstates $(ARGS1)
+	@./2d_automat $(ARGS2)
 
 
 .PHONY: all clean run
